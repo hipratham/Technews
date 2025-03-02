@@ -1,10 +1,9 @@
 from django.shortcuts import render
 from .models import TechNews
+import requests
 import os
 from datetime import datetime
 import logging
-from openai import OpenAI
-from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +19,7 @@ def home(request):
     return render(request, 'technews/home.html', {'news_articles': news_articles})
 
 def generate_tech_news():
-    """Generate tech news using OpenAI GPT."""
+    """Generate tech news using Ollama LLM."""
     logger.info("Starting news generation process...")
     
     # Clear existing news
@@ -72,40 +71,45 @@ Focus on concrete examples, research findings, and expert insights. Keep it grou
         }
     ]
     
-    client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+    OLLAMA_ENDPOINT = "http://localhost:11434/api/generate"
     
     for topic in topics:
         try:
             logger.info(f"Generating news for category: {topic['category']}")
             
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a professional technology journalist writing for a news website."},
-                    {"role": "user", "content": topic['prompt']}
-                ],
-                temperature=0.7,
-                max_tokens=1000
+            response = requests.post(
+                OLLAMA_ENDPOINT,
+                json={
+                    "model": "llama2",
+                    "prompt": topic['prompt'],
+                    "stream": False,
+                    "temperature": 0.7,
+                    "top_p": 0.9
+                }
             )
             
-            generated_text = response.choices[0].message.content
-            lines = generated_text.split('\n')
-            title = lines[0].replace('Title:', '').strip()
-            content = '\n\n'.join(line for line in lines[2:] if line.strip())
-            
-            TechNews.objects.create(
-                title=title,
-                content=content,
-                category=topic['category']
-            )
-            logger.info(f"Successfully generated news for {topic['category']}")
+            if response.status_code == 200:
+                generated_text = response.json().get('response', '')
+                lines = generated_text.split('\n')
+                title = lines[0].replace('Title:', '').strip()
+                content = '\n\n'.join(line for line in lines[2:] if line.strip())
+                
+                TechNews.objects.create(
+                    title=title,
+                    content=content,
+                    category=topic['category']
+                )
+                logger.info(f"Successfully generated news for {topic['category']}")
+            else:
+                logger.error(f"Error from Ollama API: {response.status_code}")
+                _create_fallback_article(topic['category'])
                 
         except Exception as e:
             logger.error(f"Error generating news for {topic['category']}: {str(e)}")
             _create_fallback_article(topic['category'])
 
 def _create_fallback_article(category):
-    """Create a fallback article if GPT generation fails."""
+    """Create a fallback article if LLM generation fails."""
     fallback_content = {
         'AI & Innovation': {
             'title': "AI Breakthrough: Neural Networks Show Human-Like Learning",
