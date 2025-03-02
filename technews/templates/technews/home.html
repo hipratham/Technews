@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>प्रथम Times - Tech News</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            font-family: 'Noto Sans', Arial, sans-serif;
+        }
+        
+        .newspaper {
+            width: 21cm;  /* A4 width */
+            min-height: 29.7cm;  /* A4 height */
+            margin: 0 auto;
+            padding: 2cm;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px double #000;
+            margin-bottom: 1.5em;
+            padding-bottom: 1em;
+        }
+        
+        .masthead {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 0;
+            color: #1a1a1a;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .date-line {
+            font-style: italic;
+            margin: 1em 0;
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .articles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2em;
+            flex: 1;
+        }
+        
+        .article {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .article-header {
+            margin-bottom: 1em;
+        }
+        
+        .category {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+        }
+        
+        .news-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0 0 0.5em 0;
+            line-height: 1.2;
+            color: #1a1a1a;
+        }
+        
+        .news-content {
+            column-count: 2;
+            column-gap: 2.5em;
+            text-align: justify;
+            line-height: 1.6;
+            font-size: 1em;
+            flex: 1;
+        }
+        
+        .news-content p {
+            margin: 0 0 1em 0;
+            text-indent: 2em;
+        }
+        
+        .news-content p:first-child::first-letter {
+            font-size: 3.5em;
+            float: left;
+            padding: 0.1em 0.1em 0 0;
+            line-height: 0.7;
+            color: #1a1a1a;
+        }
+        
+        .divider {
+            border-top: 2px solid #000;
+            margin: 1em 0;
+        }
+        
+        .footer {
+            text-align: center;
+            border-top: 1px solid #000;
+            padding-top: 1em;
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 2em;
+        }
+        
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            .newspaper {
+                box-shadow: none;
+                padding: 1cm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="newspaper">
+        <header class="header">
+            <h1 class="masthead">प्रथम Times</h1>
+            <div class="date-line">{{ news_articles.0.created_at|date:"l, F j, Y" }}</div>
+        </header>
+        
+        <div class="articles-container">
+            {% for article in news_articles %}
+                {% if not forloop.first %}
+                    <div class="divider"></div>
+                {% endif %}
+                <article class="article">
+                    <header class="article-header">
+                        <div class="category">{{ article.category }}</div>
+                        <h2 class="news-title">{{ article.title }}</h2>
+                    </header>
+                    <div class="news-content">
+                        {{ article.content|linebreaksbr|safe }}
+                    </div>
+                </article>
+            {% empty %}
+                <p>No news available at the moment. Please check back later.</p>
+            {% endfor %}
+        </div>
+        
+        <footer class="footer">
+            <p>प्रथम Times - Your Daily Source for Technology News</p>
+            <p>Published daily at 1:00 AM</p>
+        </footer>
+    </div>
+</body>
+</html>
