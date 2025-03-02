@@ -11,5 +11,11 @@
             "src": "/(.*)",
             "dest": "technews_project/wsgi.py"
         }
+    ],
+    "crons": [
+        {
+            "path": "/generate-news",
+            "schedule": "0 3 * * *"
+        }
     ]
 }

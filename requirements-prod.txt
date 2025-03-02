@@ -4,3 +4,4 @@ django-apscheduler==0.6.2
 python-dotenv==1.0.0
 whitenoise==6.6.0
 gunicorn==21.2.0
+openai==1.12.0
