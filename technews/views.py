@@ -87,7 +87,7 @@ Focus on concrete examples, research findings, and expert insights. Keep it grou
                         "model": "llama2",
                         "prompt": topic['prompt'],
                         "stream": False,
-                        "temperature": 0.7,
+                        "temperature": 0.9,
                         "top_p": 0.9
                     }
                 )
