@@ -6,7 +6,7 @@ A Django-based tech news website that automatically generates and displays techn
 
 - Automated news generation every day at 3 AM
 - Three distinct news categories:
-  - AI & Innovation
+  - Innovation and AI 
   - Tech Industry News
   - Future Tech Trends
 - Beautiful newspaper-style layout
