@@ -7,7 +7,7 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'technews_project.settings')
 
-# Get the WSGI application
+# Get the WSGI Application
 application = get_wsgi_application()
 
 # Add handler for Vercel serverless
